@@ -18,6 +18,8 @@
 
 package info.guardianproject.netcipher.proxy;
 
+
+import android.content.Context;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,6 +28,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
@@ -592,8 +595,15 @@ public class OrbotHelper implements ProxyHelper {
         if (orbot != null) {
             isInstalled = true;
             handler.postDelayed(onStatusTimeout, statusTimeoutMs);
-            context.registerReceiver(orbotStatusReceiver,
+	    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+	      context.registerReceiver(orbotStatusReceiver,
+		    new IntentFilter(OrbotHelper.ACTION_STATUS),
+		    Context.RECEIVER_EXPORTED
+	      );
+	    } else {
+	      context.registerReceiver(orbotStatusReceiver,
                     new IntentFilter(OrbotHelper.ACTION_STATUS));
+	    }
             context.sendBroadcast(orbot);
         } else {
             isInstalled = false;
@@ -635,7 +645,11 @@ public class OrbotHelper implements ProxyHelper {
 
         filter.addDataScheme("package");
 
-        context.registerReceiver(orbotInstallReceiver, filter);
+	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+	  context.registerReceiver(orbotInstallReceiver, filter, Context.RECEIVER_EXPORTED);
+	} else {
+	  context.registerReceiver(orbotInstallReceiver, filter);
+	}
         host.startActivity(OrbotHelper.getOrbotInstallIntent(context));
     }
 
