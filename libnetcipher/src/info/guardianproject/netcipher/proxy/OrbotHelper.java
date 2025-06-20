@@ -38,6 +38,7 @@ import android.util.Log;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -381,9 +382,9 @@ public class OrbotHelper implements ProxyHelper {
     @Nullable
     private Intent lastStatusIntent = null;
     private Set<StatusCallback> statusCallbacks =
-            newSetFromMap(new WeakHashMap<StatusCallback, Boolean>());
+            newSetFromMap(Collections.synchronizedMap(new WeakHashMap<StatusCallback, Boolean>()));
     private Set<InstallCallback> installCallbacks =
-            newSetFromMap(new WeakHashMap<InstallCallback, Boolean>());
+            newSetFromMap(Collections.synchronizedMap(new WeakHashMap<InstallCallback, Boolean>()));
     private long statusTimeoutMs = 30000L;
     private long installTimeoutMs = 60000L;
     private boolean validateOrbot = true;
